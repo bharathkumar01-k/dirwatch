@@ -5,6 +5,10 @@ import { scheduleRecursiveJob } from "./schedule_provider.service";
 
 const db = getConnection();
 const scheduleHandler = async(job:Job) =>{
+    /**
+     * Executes a series of tasks related to a specific job and updates the database accordingly.
+     * @returns None
+     */
     const taskStartTime = new Date()
     const task_uuid = job.data.task_uuid;
     const taskDetail = await db.collection('task_details').findOne({
@@ -49,7 +53,7 @@ const scheduleHandler = async(job:Job) =>{
         files = files.filter(file => file)
         const taskEndTime = new Date();
         if(!jobDetail){
-            const taskExecDetails = await db.collection('task_execution_details').insertOne({
+            await db.collection('task_execution_details').insertOne({
                 task_uuid,
                 start_time: taskStartTime,
                 end_time:taskEndTime,

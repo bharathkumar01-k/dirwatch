@@ -14,6 +14,12 @@ interface updateTaskDetails extends TaskInit{
 }
 
 export const initalizeTaskController = async (req:Request,res:Response) =>{
+    /**
+     * Creates a new task based on the request body, schedules it for a future time,
+     * and stores its details in the database.
+     * @param {TaskInit} body - The request body containing task details.
+     * @returns A response indicating the success or failure of the task creation.
+     */
     const body:TaskInit = req.body;
     const db = getConnection()
     const task_uuid = uuid()
@@ -82,6 +88,12 @@ export const initalizeTaskController = async (req:Request,res:Response) =>{
 
 
 export const updateTaskDetails = async (req:Request,res:Response) => {
+    /**
+     * Updates task details in the database based on the request body.
+     * @param {Object} req - The request object containing the body with task details.
+     * @param {Object} res - The response object to send back the result.
+     * @returns None
+     */
     const body = req.body;
     const db = getConnection();
     const scheduleAt = new Date(body.schedule_at)
@@ -133,6 +145,14 @@ export const updateTaskDetails = async (req:Request,res:Response) => {
 }
 
 export const stopTaskExecution = async (req:Request,res:Response) => {
+    /**
+     * Retrieves task details from the database based on the task_uuid provided in the request body.
+     * If the task does not exist, returns a 411 status with an error message.
+     * If the task exists, removes the job associated with the task and returns a 201 status with a success message.
+     * @param {Object} req - The request object containing the task_uuid.
+     * @param {Object} res - The response object to send back the status and message.
+     * @returns None
+     */
     const body =req.body
     const db= getConnection();
     const taskDetail = await db.collection('task_details').findOne({
@@ -153,6 +173,15 @@ export const stopTaskExecution = async (req:Request,res:Response) => {
 }
 
 export const startTaskExecution = async(req:Request,res:Response) => {
+    /**
+     * Retrieves task details from the database based on the task_uuid provided in the request body.
+     * If the task does not exist, returns a 411 status with an error message.
+     * If the task exists, schedules a recursive job based on the task_uuid and time_interval.
+     * Returns a 201 status with a success message if the task started successfully.
+     * @param {object} req - The request object containing the task_uuid.
+     * @param {object} res - The response object to send back the status and message.
+     * @returns None
+     */
     const body =req.body
     const db= getConnection();
     const taskDetail = await db.collection('task_details').findOne({
@@ -173,6 +202,13 @@ export const startTaskExecution = async(req:Request,res:Response) => {
 }
 
 export const getTaskExecutionDetails = async(req:Request,res:Response) => {
+    /**
+     * Parses the request query parameters, constructs a query object based on the parameters,
+     * and performs an aggregation query on the 'task_execution_details' collection in the database.
+     * @param {Request} req - The request object containing query parameters.
+     * @param {Response} res - The response object to send back the result.
+     * @returns None
+     */
     const queryString = JSON.parse(JSON.stringify(req.query))
 
     const task_uuid = queryString?.task_uuid || ''
@@ -217,7 +253,7 @@ export const getTaskExecutionDetails = async(req:Request,res:Response) => {
         },
         { '$facet'    : {
             metadata: [ { $count: "total" }, { $addFields: { page: page , pageSize: pageSize ,totalPages: { $ceil: { $divide: [ "$total", pageSize ] }}} }],
-            data: [ { $skip: ((page-1) * pageSize) }, { $limit: pageSize } ] // add projection here wish you re-shape the docs
+            data: [ { $skip: ((page-1) * pageSize) }, { $limit: pageSize } ] 
         } }
     ]
     try{
