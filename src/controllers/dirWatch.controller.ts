@@ -19,7 +19,6 @@ export const initalizeTaskController = async (req:Request,res:Response) =>{
     const task_uuid = uuid()
     const scheduleAt = new Date(body.schedule_at)
     const currentTime = new Date()
-    console.log('scheduleAt',scheduleAt.getTime()>currentTime.getTime(),scheduleAt,currentTime)
     if(!(scheduleAt>currentTime)){
         return res.status(411).json({
             success:false,
@@ -45,7 +44,6 @@ export const initalizeTaskController = async (req:Request,res:Response) =>{
             })
         }}catch(err){
             try{
-                console.log('inside making directory')
                 fs.mkdirSync(body.directory)
                 await db.collection('task_details').insertOne({
                     task_uuid,
@@ -79,7 +77,6 @@ export const initalizeTaskController = async (req:Request,res:Response) =>{
             }
         })
     }
-    console.log('task details -> ',taskDetail)
     
 } 
 
@@ -89,7 +86,7 @@ export const updateTaskDetails = async (req:Request,res:Response) => {
     const db = getConnection();
     const scheduleAt = new Date(body.schedule_at)
     const currentTime = new Date()
-    console.log('scheduleAt',scheduleAt.getTime()>currentTime.getTime(),scheduleAt,currentTime)
+
     if(!(scheduleAt>currentTime)){
         return res.status(411).json({
             success:false,
@@ -207,7 +204,7 @@ export const getTaskExecutionDetails = async(req:Request,res:Response) => {
         //@ts-ignore
         getTaskExecutionDetailsQuery.end_time = {$lt: new Date(end_time as string)}
     }
-    console.log('getTaskExecutionDetailsQuery',getTaskExecutionDetailsQuery,(page-1) * pageSize,pageSize,page,sortOrder)
+    
     const db = getConnection();
 
 

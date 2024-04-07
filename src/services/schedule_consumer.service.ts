@@ -25,18 +25,14 @@ const scheduleHandler = async(job:Job) =>{
     }).sort({start_time : -1}).limit(1).toArray();
     //@ts-expect-error "job detail is an object"
     jobDetail = jobDetail.pop() || null;
-    console.log('job detail',jobDetail);
     if(taskDetail){
         const {directory,magic_string} = taskDetail;
         let files= fs.readdirSync(directory,{recursive:true});
         const lookUp = new Map<string,number>();
         //@ts-ignore
         files = files.map(file => {
-            console.log(file,'file')
             const fileStatus = fs.statSync(directory+'/'+file);
-            console.log('fileStatus',fileStatus.isFile())
             if(fileStatus.isFile()){
-                console.log('file',file)
                 let occurences = 0;
                 fs.readFileSync(directory+'/'+file).toString().split(' ').forEach(word => {
                     if(word.toLowerCase().trim() === magic_string.toLowerCase().trim()){
@@ -64,9 +60,7 @@ const scheduleHandler = async(job:Job) =>{
                 files_deleted:[],
                 status:'completed'
             })
-            console.log('job detail',taskExecDetails);
         }else{
-            console.log('exec time',+taskEndTime - +taskStartTime)
             await db.collection('task_execution_details').insertOne({
                     task_uuid,
                     start_time: taskStartTime,

@@ -28,10 +28,10 @@ export const scheduleRecursiveJob = async (task_uuid : string,time:number) => {
 export const removeJob = async (task_uuid:string,time:number,status:number) => {
     if (status){
         const repeatStrategy = getRepeatStrategy(time)
-        const isRemoved = await scheduleQueue.removeRepeatable(`JobId_${task_uuid}`,{
+        await scheduleQueue.removeRepeatable(`JobId_${task_uuid}`,{
         every:repeatStrategy.every
         })
-    console.log('isRemoved',isRemoved)
+    console.log('Job Removed Successfully')
     }else{
         await scheduleQueue.remove(`JobId_${task_uuid}`)
         console.log('Job removed from queue')
