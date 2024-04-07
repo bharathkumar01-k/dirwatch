@@ -26,6 +26,9 @@
 ## APIs
 
 > The date time should always be in ***MM-DD-YYYY HH:mm*** this format
+>
+> The time_interval should always be in ***minutes***
+
 
 | S.No | Mehod | Path | Description | Sample Request | Sample Response | Additional Notes |
 |---|---|---|---|---|---|---|
